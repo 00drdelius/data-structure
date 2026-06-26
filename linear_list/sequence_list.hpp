@@ -1,3 +1,5 @@
+// 顺序表
+
 #ifndef __sequance_list
 #define __sequance_list
 
