@@ -4,6 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <memory>
+
 
 // #condition: 将参数值转为字符串变量作为宏展开
 // do ... while: 因为宏函数展开后有分号分隔。若使用宏函数的地方如下：
