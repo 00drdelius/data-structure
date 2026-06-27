@@ -3,9 +3,6 @@
 #ifndef __sequance_list
 #define __sequance_list
 
-#include <iostream>
-#include <memory>
-#include <string>
 #include "utils.hpp"
 
 #define DefaultMaxSize 10
@@ -59,8 +56,7 @@ class SequenceList : public BaseObject {
 
   T& operator[](unsigned int index) const {
     // return value is not decorated by const, I may modify the value in the index
-    assert(index < length, "index out of the list bound");
-    return data[index];
+    return search(index);
   }
 
   bool _expand_list(unsigned int expand_size) {
@@ -127,7 +123,7 @@ class SequenceList : public BaseObject {
     return true;
   }
 
-  T search(unsigned int index) {
+  T& search(unsigned int index) {
     assert(index < length, "the position you attempt to insert is out of bound");
     return data[index];
   }
