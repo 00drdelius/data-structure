@@ -25,12 +25,42 @@ class SequenceList : public BaseObject {
     data = std::make_unique<T[]>(max_size);
   }
 
+  /*
+  const配合指针时用法：
+  `const int * const p`
+   首个(底层)const: 修饰指向的内容; 第二个(顶层)const: 修饰指针本身
+   即：
+   ```
+   int a = 1, b = 2;
+   int* const p1 = &a;
+   p1=&b; //❎, const修饰指针，无法修改指针；
+   *p1=b; //✅, const修饰指针，可以修改值
+   const int* p2 = &a;
+   p2=&b; //✅, const修饰值，可以修改指针；
+   *p2=b; //❎, const修饰值，不可修改值
+   ```
+
+  this传入机制:
+  `T& function(size_t var)`会被编译器编译成`T& function(T* const this, size_t var)`
+  如果函数名后加上const:
+  `T& function(size_t var) const`会被编译器编译成`T& function(const T* const this, size_t var)`
+  此时在函数内无法修改成员对象，因为加上了修饰指向内容的底层const
+
+  若是 `const T& function() {}`:
+  意味着返回对象是const: `const T& var = function()`
+  */
   unsigned int get_max_size() const {
     return max_size;
   }
 
   unsigned int get_length() const {
     return length;
+  }
+
+  T& operator[](unsigned int index) const {
+    // return value is not decorated by const, I may modify the value in the index
+    assert(index < length, "index out of the list bound");
+    return data[index];
   }
 
   bool _expand_list(unsigned int expand_size) {
@@ -64,8 +94,8 @@ class SequenceList : public BaseObject {
     return true;
   }
 
-  bool _insert(const T& ele, unsigned int loc) {
-    assert(loc < max_size, "the position you attempt to insert is out of bound");
+  bool _insert(const T& ele, unsigned int index) {
+    assert(index < max_size, "the position you attempt to insert is out of bound");
     if (dynamic == false) {
       assert(length + 1 <= max_size, "sequence list is full. Cannot insert additional element.");
     } else {
@@ -73,20 +103,20 @@ class SequenceList : public BaseObject {
         _expand_list(max_size);
       }
     }
-    for (int i = length - 1; i > loc - 1; i--) {
-      // move the right elements to make the loc available
+    for (int i = length - 1; i > index - 1; i--) {
+      // move the right elements to make the index available
       data[i + 1] = data[i];
     }
-    data[loc] = ele;
+    data[index] = ele;
     length++;
     return true;
   }
 
-  bool _delete(unsigned int loc) {
-    assert(loc < length, "the position you attempt to delete is out of bound");
-    // data[loc] = nullptr; // no need. Just directly replace this position with
+  bool _delete(unsigned int index) {
+    assert(index < length, "the position you attempt to delete is out of bound");
+    // data[index] = nullptr; // no need. Just directly replace this position with
     // other elements
-    for (int i = loc + 1; i < length; i++) {
+    for (int i = index + 1; i < length; i++) {
       data[i - 1] = data[i];
     }
     data[length - 1] = T();
@@ -97,14 +127,14 @@ class SequenceList : public BaseObject {
     return true;
   }
 
-  T search(unsigned int loc) {
-    assert(loc < length, "the position you attempt to insert is out of bound");
-    return data[loc];
+  T search(unsigned int index) {
+    assert(index < length, "the position you attempt to insert is out of bound");
+    return data[index];
   }
 
-  T* search_ptr(unsigned int loc) {
-    assert(loc < length, "the position you attempt to insert is out of bound");
-    return &data[loc];
+  T* search_ptr(unsigned int index) {
+    assert(index < length, "the position you attempt to insert is out of bound");
+    return &data[index];
   }
 
   int search(const T& ele) {
