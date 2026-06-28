@@ -5,7 +5,7 @@ AlignTrailingComments: true
 AlignConsecutiveMacros: AcrossEmptyLinesAndComments
 
 
-AccessModifierOffset: -1
+AccessModifierOffset: -2
 AlignAfterOpenBracket: AlwaysBreak
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false

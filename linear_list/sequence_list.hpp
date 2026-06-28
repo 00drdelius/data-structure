@@ -9,13 +9,13 @@
 
 template <typename T>
 class SequenceList : public BaseObject {
- private:
+private:
   int length;
   std::unique_ptr<T[]> data;
   unsigned int max_size;
   bool dynamic;
 
- public:
+public:
   // initialize sequence list
   SequenceList(bool __dy = false, int __size = DefaultMaxSize)
       : length(0), max_size(__size), dynamic(__dy) {
