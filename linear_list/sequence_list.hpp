@@ -67,8 +67,9 @@ public:
     for (int i = 0; i < length; ++i) {
       new_data[i] = data[i]; // Or use std::copy
     }
-    data = std::move(new_data); // cannot `T* data = new_data` when both of them
-                                // are unique_ptr, only std::move is allowed
+    // data为unique_ptr，其拷贝构造函数=delete，无法值拷贝，因此：
+    // 调用unique_ptr的operator=(unique_ptr&&)，移动赋值运算符
+    data = std::move(new_data);
     max_size = new_max_size;
     return true;
   }
@@ -76,6 +77,8 @@ public:
   /*
   param must starts with const, otherwise error raises when calling this function:
   Non-const lvalue reference to type 'int' cannot bind to a temporary of type 'int'
+  意思是没有const修饰的左值引用无法绑定临时对象（右值）；
+  而加了const即可绑定是因为你已经通过const约束该变量不会被修改，毕竟修改一个临时变量是没有意义的
   */
   bool append(const T& ele) {
     if (dynamic == false) {
@@ -154,5 +157,60 @@ public:
     return __str_obj;
   }
 };
+
+template <typename T>
+void sequence_list_test(std::vector<T> default_vector) {
+  int static_size = 5;
+  SequenceList<T> static_list{false, static_size};
+  // check static array
+  std::cout << "[static array test]" << std::endl;
+  std::cout << "append\n";
+  for (auto ele : default_vector) {
+    try {
+      static_list.append(ele);
+    } catch (std::exception& e) {
+      std::cout << "Exception raised: " << e.what() << std::endl;
+      break;
+    }
+  }
+  std::cout << "Max size of this static list is " << static_list.get_max_size() << std::endl
+            << "Length already is " << static_list.get_length() << std::endl
+            << "Source list: " << static_list << std::endl;
+
+  static_list._delete(0);
+  std::cout << "after deleting index=0\n";
+  std::cout << static_list << std::endl;
+
+  static_list._insert(10, 2);
+  std::cout << "after inserting index=2 with value=10\n";
+  std::cout << static_list << std::endl;
+
+  // test index search
+  unsigned int index = 1;
+  std::cout << "index search: index=" << index << "; result=" << static_list.search(index)
+            << " with its pointer: " << static_list.search_ptr(index) << std::endl;
+
+  // test element search
+  int element = 10;
+  std::cout << "element search: element=" << element << "; result=" << static_list.search(element)
+            << std::endl;
+
+  // dynamic array
+  SequenceList<int> dynamic_list{true, static_size};
+  // check dynamic array
+  std::cout << "[static array test]" << std::endl;
+  std::cout << "append\n";
+  for (auto ele : default_vector) {
+    try {
+      dynamic_list.append(ele);
+    } catch (std::exception& e) {
+      std::cout << "Exception raised: " << e.what() << std::endl;
+      break;
+    }
+  }
+  std::cout << "Max size of this static list is " << dynamic_list.get_max_size() << std::endl
+            << "Length already is " << dynamic_list.get_length() << std::endl
+            << "Source list: " << dynamic_list << std::endl;
+}
 
 #endif
