@@ -1,3 +1,5 @@
+// 链表
+
 #ifndef __linked_list__
 #define __linked_list__
 
