@@ -3,6 +3,9 @@
 #ifndef __circular_queue__
 #define __circular_queue__
 
+#include <exception>
+#include <iostream>
+#include <ostream>
 #include <string>
 #include <type_traits>
 #include "utils.hpp"
@@ -46,6 +49,8 @@ public:
       // 指针赋值，是一种直接转移覆盖指针地址的行为；被覆盖的指针地址不会自动删除自己的内容
       data = other.data;
       max_size = other.max_size;
+      rear = other.rear;
+      front = other.front;
 
       // 必须显式指定 data=nullptr。否则other执行析构函数，会导致 this->data 指向的地址也被删除。
       // 因为 this->data 只是被 other.data 所覆盖；
@@ -56,20 +61,20 @@ public:
     return *this;
   }
 
-  int get_length() {
+  int get_length() const {
     return (max_size + front - rear) % max_size;
   }
 
-  bool is_empty() {
+  bool is_empty() const {
     return front == rear;
   }
 
-  bool is_full() {
+  bool is_full() const {
     // return front-rear==1; // 因为是 circular 的，所以front有概率小于rear，不能直接front-rear判断
-    return (max_size + front - rear) % max_size == 1;
+    return (front + 1) % max_size == rear;
   }
 
-  const T& get_front() {
+  const T& get_front() const {
     return data[front];
   }
 
@@ -84,8 +89,8 @@ public:
   T dequeue() {
     assert(!is_empty(), "Cannot dequeue more, queue is empty");
     // return data[++rear]; // of course cannot return directly as data[rear] is logically dropped
-    rear = (rear + 1) % max_size;
     T ele = std::move(data[rear]);
+    rear = (rear + 1) % max_size;
     return ele;
   }
 
@@ -93,9 +98,14 @@ public:
     delete[] data;
   }
 
-  std::string __str__() const override {
+  /*
+  const成员函数也必须调用const成员函数，保证内部调用的成员函数不会修改对象变量
+  这里的 get_length() 不是 const，get_length中可能出现修改对象变量的代码。因此必须const声明才能被const调用
+  */
+  std::string __str__() const override { 
     std::string __obj{"{"};
-    for (int i = 0; i < get_length(); i++) {
+    int length = get_length();
+    for (int i = 0; i < length; i++) {
       __obj.append(std::to_string(data[i]) + ", ");
     }
     __obj.append("}");
@@ -108,7 +118,46 @@ void test_circular_queue(std::vector<T> default_vector) {
   int static_size = 5;
   CircularQueue<int> queue{static_size};
 
-//   queue.~CircularQueue();
+  std::cout << "testing enqueue:\n";
+  for (T ele : default_vector) {
+    try {
+      queue.enqueue(ele);
+    } catch (std::exception& e) {
+      std::cout << "Exception raised: " << e.what() << std::endl;
+      break;
+    }
+  }
+  std::cout << "Length is: " << queue.get_length() << std::endl
+            << "after enqueue: " << queue << std::endl;
+
+  std::cout << "testing dequeue:\n";
+  T out1 = queue.dequeue();
+  T out2 = queue.dequeue();
+  std::cout << "dequeue out1: " << out1 << std::endl
+            << "dequeue out2: " << out2 << std::endl
+            << "after dequeue: " << queue;
+
+  std::cout << "testing get_front:\n" << queue.get_front() << std::endl;
+
+  std::cout << "testing enqueue again:\n";
+  queue.enqueue(101);
+  std::cout << "enqueue: 101\n";
+  queue.enqueue(178);
+  std::cout << "enqueue: 178\n";
+  std::cout << "after enqueue:\n"
+            << "If is_full: " << queue.is_full() << std::endl
+            << "Current queue: " << queue << std::endl;
+
+  /*
+  注意1：不应该显式调用析构函数。∵编译器会在作用域结束时自动调用各局部变量的析构函数，
+  如果这里已经手动调用，编译器的自动调用就会出现UB(undefined behavior)。
+  当然上述适用于栈上的，堆上的仍需手动调用
+
+   注意2：堆上的变量也不要手动调用`~Object()`，应该使用`delete obj`。
+   手动调用只是调用析构函数，但是`delete`会调用析构，再删除分配的动态内存
+  */
+  //    queue.~CircularQueue();
+  //   delete queue;
 }
 
 #endif

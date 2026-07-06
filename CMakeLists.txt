@@ -17,6 +17,8 @@ list(APPEND CXX_SRCS
     ./linear_list/sequence_list.hpp # work dir is current dir of current CMakeLists.txt: ${CMAKE_CURRENT_SOURCE_DIR}
     ./linear_list/linked_list.hpp
     ./linear_list/stack.hpp
+    ./linear_list/circular_queue.hpp
+
     ./utils.hpp
     ./main.cpp
 )

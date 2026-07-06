@@ -4,6 +4,7 @@
 #include "linear_list/linked_list.hpp"
 #include "linear_list/sequence_list.hpp"
 #include "linear_list/stack.hpp"
+#include "linear_list/circular_queue.hpp"
 
 #define MAX_SIZE      100 // Maximum size
 #define MIN_SIZE      10 // Minimum size
@@ -29,5 +30,6 @@ int main() {
   std::vector<int> default_vector{0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   //   sequence_list_test(default_vector);
 //   linked_list_test(default_vector);
-    stack_test(default_vector);
+    // stack_test(default_vector);
+    test_circular_queue(default_vector);
 }
