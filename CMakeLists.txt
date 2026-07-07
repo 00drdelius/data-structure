@@ -9,6 +9,9 @@ set(CMAKE_CXX_STANDARD 14) # make_unique support starts from 14
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) #NOTE to export `compile_commands.json` for clangd to process intellisense
 
+set(CMAKE_BUILD_TYPE "Debug")
+set(CMAKE_CXX_FLAGS_DEBUG "-g -O0") # 关闭编译优化，便于调试
+
 set(CXX_SRCS) # source files list
 
 # CMAKE三阶段：configure(配置)->build(编译)->(install(安装)，可忽略)

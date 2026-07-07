@@ -75,7 +75,7 @@ public:
   }
 
   const T& get_front() const {
-    return data[front];
+    return data[front - 1];
   }
 
   // setting data as const T& to compatible with right value
@@ -100,13 +100,14 @@ public:
 
   /*
   const成员函数也必须调用const成员函数，保证内部调用的成员函数不会修改对象变量
-  这里的 get_length() 不是 const，get_length中可能出现修改对象变量的代码。因此必须const声明才能被const调用
+  这里的 get_length() 不是
+  const，get_length中可能出现修改对象变量的代码。因此必须const声明才能被const调用
   */
-  std::string __str__() const override { 
+  std::string __str__() const override {
     std::string __obj{"{"};
     int length = get_length();
     for (int i = 0; i < length; i++) {
-      __obj.append(std::to_string(data[i]) + ", ");
+      __obj.append(std::to_string(data[(i + rear) % max_size]) + ", ");
     }
     __obj.append("}");
     return __obj;
@@ -135,7 +136,7 @@ void test_circular_queue(std::vector<T> default_vector) {
   T out2 = queue.dequeue();
   std::cout << "dequeue out1: " << out1 << std::endl
             << "dequeue out2: " << out2 << std::endl
-            << "after dequeue: " << queue;
+            << "after dequeue: " << queue << std::endl;
 
   std::cout << "testing get_front:\n" << queue.get_front() << std::endl;
 
