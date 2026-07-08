@@ -41,7 +41,7 @@ int AdjacencyMatrix<T>::search_vertex(const T& x) const {
 
 // 外部实现不用加 override，其只能用在类定义内部的成员函数声明中
 template <typename T>
-bool AdjacencyMatrix<T>::adjacent(const T& x, const T& y) {
+bool AdjacencyMatrix<T>::adjacent(const T& x, const T& y) const {
   //   int x_index = search_vertex(x); // O(n)
   //   int y_index = search_vertex(y); // O(n)
   //   assert(x_index != -1, "vertex x does not exist");
@@ -121,18 +121,50 @@ bool AdjacencyMatrix<T>::remove_edge(const T& x, const T& y) {
   return true;
 }
 
-// returning {-1,-1} means there's no first neighbor
+// returning {-1,-1} means there's no neighbor
 template <typename T>
-std::vector<T> AdjacencyMatrix<T>::first_neighbor(const T &x){
-    int search_index = search_vertex(x);
+std::vector<T> AdjacencyMatrix<T>::first_neighbor(const T& x) const {
+  int search_index = search_vertex(x);
 
-    for(int j=0;j<length;j++){
-        int weight = edges[search_index][j];
-        if (weight!=-1 && weight!=0){
-            return {search_index, j};
-        }
+  for (int j = 0; j < length; j++) {
+    int weight = edges[search_index][j];
+    if (weight != -1 && weight != 0) {
+      return {search_index, j};
     }
-    return {-1, -1};
+  }
+  return {-1, -1};
+}
+
+// return {-1, -1} means there's no next neighbor
+template <typename T>
+std::vector<T> AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
+  int search_index = search_vertex(x);
+
+  bool return_vertex = false;
+  for (int j = 0; j < length; j++) {
+    int weight = edges[search_index][j];
+    if (weight != -1 && weight != 0) {
+      if (!return_vertex) {
+        return_vertex = true;
+      } else {
+        return {search_index, j};
+      }
+    }
+  }
+  return {-1, -1};
+}
+
+template <typename T>
+int AdjacencyMatrix<T>::get_edge_weight(const T& x, const T& y) const {
+  search_double_with_assert(x, y);
+  return edges[x_index][y_index];
+}
+
+template <typename T>
+bool AdjacencyMatrix<T>::set_edge_weight(const T& x, const T& y, int weight) {
+  search_double_with_assert(x, y);
+  edges[x_index][y_index] = weight;
+  return true;
 }
 
 #endif

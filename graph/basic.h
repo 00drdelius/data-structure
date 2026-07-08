@@ -23,8 +23,8 @@ public:
   // sets no signature, fix the size
   BasicGraph(StoreTypes store_type);
 
-  // determine whether the <x,y>/(x,y) exists
-  virtual bool adjacent(const T& x, const T& y) = 0;
+  // determine whether the <x,y>/(x,y) exists. `=0` means this is pure virtual function
+  virtual bool adjacent(const T& x, const T& y) const = 0;
 
   // list all edges adjacent to the vertex x
   std::vector<std::vector<T>> neighbors(const T& x) = 0;
@@ -34,21 +34,23 @@ public:
   virtual bool delete_vertex(const T& x) = 0;
 
   // raise error if edge exists
-  virtual bool add_edge(const T& x,const T& y) = 0;
+  virtual bool add_edge(const T& x, const T& y) = 0;
 
-  virtual bool remove_edge(const T& x,const T& y) = 0;
+  virtual bool remove_edge(const T& x, const T& y) = 0;
 
   // find the first adjacent vertex if exists, else raise error
-  virtual std::vector<T> first_neighbor(const T& x) = 0;
+  virtual std::vector<T> first_neighbor(const T& x) const = 0;
 
   // find the next adjacent vertex of x after y
-  virtual std::vector<T> next_neighbor(const T& x, const T& y) = 0;
+  virtual std::vector<T> next_neighbor(const T& x, const T& y) const = 0;
 
   // return edge weight
-  virtual int get_edge_weight(const T& x, const T& y) = 0;
+  virtual int get_edge_weight(const T& x, const T& y) const = 0;
 
-  // set/overwrite edge weight
+  // set overwrite edge weight
   virtual bool set_edge_weight(const T& x, const T& y, int weight) = 0;
+
+  virtual std::vector<T> BFS() const = 0;
 };
 
 #define MAX_ROWS    10
@@ -60,7 +62,7 @@ private:
   T* vertices; // store list of vetex
   int length; // length of vertices
 
-  // defaults to -1, represents no vertex; 
+  // defaults to -1, represents no vertex;
   // 0, represents no edge but has vertex;
   int edges[MAX_ROWS][MAX_COLUMNS];
 
@@ -71,14 +73,14 @@ public:
   // search vertex from vertices, return list index
   int search_vertex(const T& x) const;
 
-  bool adjacent(const T& x, const T& y) override;
+  bool adjacent(const T& x, const T& y) const override;
   bool insert_vertex(const T& x) override;
   bool delete_vertex(const T& x) override;
   bool add_edge(const T& x, const T& y) override;
   bool remove_edge(const T& x, const T& y) override;
-  std::vector<T> first_neighbor(const T& x) override;
-  std::vector<T> next_neighbor(const T& x, const T& y) override;
-  int get_edge_weight(const T& x, const T& y) override;
+  std::vector<T> first_neighbor(const T& x) const override;
+  std::vector<T> next_neighbor(const T& x, const T& y) const override;
+  int get_edge_weight(const T& x, const T& y) const override;
   bool set_edge_weight(const T& x, const T& y, int weight) override;
 };
 
