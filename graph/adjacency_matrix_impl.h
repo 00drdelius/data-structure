@@ -4,6 +4,7 @@
 #ifndef __adjacency_matrix_impl__
 #define __adjacency_matrix_impl__
 
+#include <queue>
 #include <vector>
 #include "graph/basic.h"
 #include "utils.hpp"
@@ -121,23 +122,23 @@ bool AdjacencyMatrix<T>::remove_edge(const T& x, const T& y) {
   return true;
 }
 
-// returning {-1,-1} means there's no neighbor
+// returning -1 means there's no neighbor
 template <typename T>
-std::vector<T> AdjacencyMatrix<T>::first_neighbor(const T& x) const {
+int AdjacencyMatrix<T>::first_neighbor(const T& x) const {
   int search_index = search_vertex(x);
 
   for (int j = 0; j < length; j++) {
     int weight = edges[search_index][j];
     if (weight != -1 && weight != 0) {
-      return {search_index, j};
+      return j;
     }
   }
-  return {-1, -1};
+  return -1;
 }
 
-// return {-1, -1} means there's no next neighbor
+// return -1 means there's no next neighbor
 template <typename T>
-std::vector<T> AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
+int AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
   int search_index = search_vertex(x);
 
   bool return_vertex = false;
@@ -147,11 +148,11 @@ std::vector<T> AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
       if (!return_vertex) {
         return_vertex = true;
       } else {
-        return {search_index, j};
+        return j;
       }
     }
   }
-  return {-1, -1};
+  return -1;
 }
 
 template <typename T>
@@ -165,6 +166,23 @@ bool AdjacencyMatrix<T>::set_edge_weight(const T& x, const T& y, int weight) {
   search_double_with_assert(x, y);
   edges[x_index][y_index] = weight;
   return true;
+}
+
+template <typename T>
+std::vector<T> AdjacencyMatrix<T>::BFS() const {
+  // 广度优先遍历：类似树的层次遍历
+  bool visited[length];
+  for (int i = 0; i < length; i++) {
+    visited[i] = false;
+  }
+  std::queue<T> queue;
+  T vertex1 = vertices[0];
+  queue.push(vertex1);
+  while (!queue.empty()) {
+    T ele = queue.pop();
+    for (int v_index=first_neighbor(ele);
+        ) {}
+  }
 }
 
 #endif
