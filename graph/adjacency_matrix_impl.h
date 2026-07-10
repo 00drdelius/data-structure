@@ -169,9 +169,10 @@ bool AdjacencyMatrix<T>::set_edge_weight(const T& x, const T& y, int weight) {
   return true;
 }
 
+// 广度优先遍历：类似树的层次遍历
 template <typename T>
 std::vector<T> AdjacencyMatrix<T>::BFS() const {
-  // 广度优先遍历：类似树的层次遍历
+  std::vector<T> vector;
   bool visited[length];
   // array to record if the vertex has been visited
   for (int i = 0; i < length; i++) {
@@ -186,6 +187,9 @@ std::vector<T> AdjacencyMatrix<T>::BFS() const {
   std::cout << "visited vertex: " << vertex1 << std::endl;
   visited[0] = true;
   queue.push(vertex1);
+
+  // 引用折叠，传入左值引用在参数内就是左值引用。在里面不会触发移动构造函数
+  vector.emplace_back(vertex1);
   while (!queue.empty()) {
     T ele = queue.pop(); // pop element
 
@@ -198,9 +202,12 @@ std::vector<T> AdjacencyMatrix<T>::BFS() const {
         std::cout << "visited vertex: " << vertex << std::endl;
         visited[adj_index] = true;
         queue.push(vertex); // iteratly push vertex into queue
+        vector.emplace_back(vertex);
       }
     }
   }
 }
+
+template<typename T>
 
 #endif
