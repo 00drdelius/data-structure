@@ -208,6 +208,26 @@ std::vector<T> AdjacencyMatrix<T>::BFS() const {
   }
 }
 
-template<typename T>
+template <typename T>
+void iterating_depth() {}
+
+template <typename T>
+std::vector<T> AdjacencyMatrix<T>::DFS() const {
+  std::vector<T> vector;
+
+  bool visited[length];
+  // array to record if the vertex has been visited
+  for (int i = 0; i < length; i++) {
+    visited[i] = false;
+  }
+
+  // visit first vertex
+  T& vertex = vertices[0];
+  std::cout << "visited vertex: " << vertex << std::endl;
+  visited[0] = true;
+  for (int visit_index = first_neighbor(vertex); visit_index != -1;
+       visit_index = next_neighbor(vertex, vertices[visit_index])) {
+  }
+}
 
 #endif
