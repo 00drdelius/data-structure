@@ -187,15 +187,17 @@ std::vector<T> AdjacencyMatrix<T>::BFS() const {
   visited[0] = true;
   queue.push(vertex1);
   while (!queue.empty()) {
-    T ele = queue.pop();
+    T ele = queue.pop(); // pop element
+
+    // search all adjacent vertices
     for (int adj_index = first_neighbor(ele); adj_index != -1;
-         adj_index = next_neighbor(ele, vertices[adj_index]))
-    {
+         adj_index = next_neighbor(ele, vertices[adj_index])) {
+      // visit adjacent vertex
       if (!visited[adj_index]) {
         T& vertex = vertices[adj_index];
         std::cout << "visited vertex: " << vertex << std::endl;
         visited[adj_index] = true;
-        queue.push(vertex);
+        queue.push(vertex); // iteratly push vertex into queue
       }
     }
   }
