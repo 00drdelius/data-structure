@@ -126,6 +126,7 @@ bool AdjacencyMatrix<T>::remove_edge(const T& x, const T& y) {
 template <typename T>
 int AdjacencyMatrix<T>::first_neighbor(const T& x) const {
   int search_index = search_vertex(x);
+  assert(search_index != -1, "Vertex not exists");
 
   for (int j = 0; j < length; j++) {
     int weight = edges[search_index][j];
@@ -139,11 +140,11 @@ int AdjacencyMatrix<T>::first_neighbor(const T& x) const {
 // return -1 means there's no next neighbor
 template <typename T>
 int AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
-  int search_index = search_vertex(x);
+  search_double_with_assert(x, y);
 
   bool return_vertex = false;
   for (int j = 0; j < length; j++) {
-    int weight = edges[search_index][j];
+    int weight = edges[x_index][j];
     if (weight != -1 && weight != 0) {
       if (!return_vertex) {
         return_vertex = true;
@@ -172,16 +173,31 @@ template <typename T>
 std::vector<T> AdjacencyMatrix<T>::BFS() const {
   // 广度优先遍历：类似树的层次遍历
   bool visited[length];
+  // array to record if the vertex has been visited
   for (int i = 0; i < length; i++) {
     visited[i] = false;
   }
+
+  // auxiliary queue
   std::queue<T> queue;
-  T vertex1 = vertices[0];
+
+  // visit the first index first
+  T& vertex1 = vertices[0];
+  std::cout << "visited vertex: " << vertex1 << std::endl;
+  visited[0] = true;
   queue.push(vertex1);
   while (!queue.empty()) {
     T ele = queue.pop();
-    for (int v_index=first_neighbor(ele);
-        ) {}
+    for (int adj_index = first_neighbor(ele); adj_index != -1;
+         adj_index = next_neighbor(ele, vertices[adj_index]))
+    {
+      if (!visited[adj_index]) {
+        T& vertex = vertices[adj_index];
+        std::cout << "visited vertex: " << vertex << std::endl;
+        visited[adj_index] = true;
+        queue.push(vertex);
+      }
+    }
   }
 }
 
