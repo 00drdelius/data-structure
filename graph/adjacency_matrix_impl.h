@@ -4,6 +4,7 @@
 #ifndef __adjacency_matrix_impl__
 #define __adjacency_matrix_impl__
 
+#include <queue>
 #include <vector>
 #include "graph/basic.h"
 #include "utils.hpp"
@@ -121,37 +122,38 @@ bool AdjacencyMatrix<T>::remove_edge(const T& x, const T& y) {
   return true;
 }
 
-// returning {-1,-1} means there's no neighbor
+// returning -1 means there's no neighbor
 template <typename T>
-std::vector<T> AdjacencyMatrix<T>::first_neighbor(const T& x) const {
+int AdjacencyMatrix<T>::first_neighbor(const T& x) const {
   int search_index = search_vertex(x);
+  assert(search_index != -1, "Vertex not exists");
 
   for (int j = 0; j < length; j++) {
     int weight = edges[search_index][j];
     if (weight != -1 && weight != 0) {
-      return {search_index, j};
+      return j;
     }
   }
-  return {-1, -1};
+  return -1;
 }
 
-// return {-1, -1} means there's no next neighbor
+// return -1 means there's no next neighbor
 template <typename T>
-std::vector<T> AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
-  int search_index = search_vertex(x);
+int AdjacencyMatrix<T>::next_neighbor(const T& x, const T& y) const {
+  search_double_with_assert(x, y);
 
   bool return_vertex = false;
   for (int j = 0; j < length; j++) {
-    int weight = edges[search_index][j];
+    int weight = edges[x_index][j];
     if (weight != -1 && weight != 0) {
       if (!return_vertex) {
         return_vertex = true;
       } else {
-        return {search_index, j};
+        return j;
       }
     }
   }
-  return {-1, -1};
+  return -1;
 }
 
 template <typename T>
@@ -165,6 +167,67 @@ bool AdjacencyMatrix<T>::set_edge_weight(const T& x, const T& y, int weight) {
   search_double_with_assert(x, y);
   edges[x_index][y_index] = weight;
   return true;
+}
+
+// 广度优先遍历：类似树的层次遍历
+template <typename T>
+std::vector<T> AdjacencyMatrix<T>::BFS() const {
+  std::vector<T> vector;
+  bool visited[length];
+  // array to record if the vertex has been visited
+  for (int i = 0; i < length; i++) {
+    visited[i] = false;
+  }
+
+  // auxiliary queue
+  std::queue<T> queue;
+
+  // visit the first index first
+  T& vertex1 = vertices[0];
+  std::cout << "visited vertex: " << vertex1 << std::endl;
+  visited[0] = true;
+  queue.push(vertex1);
+
+  // 引用折叠，传入左值引用在参数内就是左值引用。在里面不会触发移动构造函数
+  vector.emplace_back(vertex1);
+  while (!queue.empty()) {
+    T ele = queue.pop(); // pop element
+
+    // search all adjacent vertices
+    for (int adj_index = first_neighbor(ele); adj_index != -1;
+         adj_index = next_neighbor(ele, vertices[adj_index])) {
+      // visit adjacent vertex
+      if (!visited[adj_index]) {
+        T& vertex = vertices[adj_index];
+        std::cout << "visited vertex: " << vertex << std::endl;
+        visited[adj_index] = true;
+        queue.push(vertex); // iteratly push vertex into queue
+        vector.emplace_back(vertex);
+      }
+    }
+  }
+}
+
+template <typename T>
+void iterating_depth() {}
+
+template <typename T>
+std::vector<T> AdjacencyMatrix<T>::DFS() const {
+  std::vector<T> vector;
+
+  bool visited[length];
+  // array to record if the vertex has been visited
+  for (int i = 0; i < length; i++) {
+    visited[i] = false;
+  }
+
+  // visit first vertex
+  T& vertex = vertices[0];
+  std::cout << "visited vertex: " << vertex << std::endl;
+  visited[0] = true;
+  for (int visit_index = first_neighbor(vertex); visit_index != -1;
+       visit_index = next_neighbor(vertex, vertices[visit_index])) {
+  }
 }
 
 #endif

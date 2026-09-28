@@ -1,7 +1,7 @@
 #ifndef __basic_graph_obj__
 #define __basic_graph_obj__
 
-#include <vector>
+#include <queue>
 #include "utils.hpp"
 
 // allowed graph storage type
@@ -38,11 +38,11 @@ public:
 
   virtual bool remove_edge(const T& x, const T& y) = 0;
 
-  // find the first adjacent vertex if exists, else raise error
-  virtual std::vector<T> first_neighbor(const T& x) const = 0;
+  // find index of the first adjacent vertex if exists, else raise error
+  virtual int first_neighbor(const T& x) const = 0;
 
-  // find the next adjacent vertex of x after y
-  virtual std::vector<T> next_neighbor(const T& x, const T& y) const = 0;
+  // find index of the next adjacent vertex of y after x
+  virtual int next_neighbor(const T& x, const T& y) const = 0;
 
   // return edge weight
   virtual int get_edge_weight(const T& x, const T& y) const = 0;
@@ -50,7 +50,11 @@ public:
   // set overwrite edge weight
   virtual bool set_edge_weight(const T& x, const T& y, int weight) = 0;
 
+  // breadth-first search. Returns a sequence of the vertices
   virtual std::vector<T> BFS() const = 0;
+
+  // depth-first search. Returns a sequence of the vertices
+  virtual std::vector<T> DFS() const = 0;
 };
 
 #define MAX_ROWS    10
@@ -78,10 +82,12 @@ public:
   bool delete_vertex(const T& x) override;
   bool add_edge(const T& x, const T& y) override;
   bool remove_edge(const T& x, const T& y) override;
-  std::vector<T> first_neighbor(const T& x) const override;
-  std::vector<T> next_neighbor(const T& x, const T& y) const override;
+  int first_neighbor(const T& x) const override;
+  int next_neighbor(const T& x, const T& y) const override;
   int get_edge_weight(const T& x, const T& y) const override;
   bool set_edge_weight(const T& x, const T& y, int weight) override;
+  std::vector<T> BFS() const override;
+  std::vector<T> DFS() const override;
 };
 
 template <typename T>
@@ -101,10 +107,12 @@ public:
   bool delete_vertex(const T& x) override;
   bool add_edge(const T& x, const T& y) override;
   bool remove_edge(const T& x, const T& y) override;
-  std::vector<T> first_neighbor(const T& x) override;
-  std::vector<T> next_neighbor(const T& x, const T& y) override;
+  int first_neighbor(const T& x) override;
+  int next_neighbor(const T& x, const T& y) override;
   int get_edge_weight(const T& x, const T& y) override;
   bool set_edge_weight(const T& x, const T& y, int weight) override;
+  std::vector<T> BFS() const override;
+  std::vector<T> DFS() const override;
 };
 
 #endif
