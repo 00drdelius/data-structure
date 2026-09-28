@@ -16,11 +16,14 @@ set(CXX_SRCS) # source files list
 
 # CMAKE三阶段：configure(配置)->build(编译)->(install(安装)，可忽略)
 # 手动维护。这样cmake编译时检测到CMakeLists.txt改动，会自动configure再编译
-list(APPEND CXX_SRCS
-    ./linear_list/sequence_list.hpp # work dir is current dir of current CMakeLists.txt: ${CMAKE_CURRENT_SOURCE_DIR}
-    ./linear_list/linked_list.hpp
-    ./linear_list/stack.hpp
-    ./linear_list/circular_queue.hpp
+list(APPEND CXX_SRCS # work dir is current dir of current CMakeLists.txt: ${CMAKE_CURRENT_SOURCE_DIR}
+    # hpp is detected as header file, so u don't need to append them into CXX_SRCS,
+    # they are included automatically in `target_include_directories`
+
+    # ./linear_list/sequence_list.hpp
+    # ./linear_list/linked_list.hpp
+    # ./linear_list/stack.hpp
+    # ./linear_list/circular_queue.hpp
 
     ./utils.hpp
     ./main.cpp
