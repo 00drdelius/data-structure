@@ -20,6 +20,8 @@ list(APPEND CXX_SRCS
     # hpp is detected as header file, so u don't need to append them into CXX_SRCS,
     # they are included automatically in `target_include_directories`
 
+    ./408_2010/algo.cpp
+    ./408_2009/algo.cpp
     ./main.cpp
 )
 
